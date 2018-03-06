@@ -29,5 +29,4 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'fog-core', '>= 1.45.0'
   spec.add_dependency 'fog-json', '>= 1.0.2'
-  spec.add_dependency 'net-ssh', '~> 4.0'
 end
