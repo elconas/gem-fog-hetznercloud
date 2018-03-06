@@ -24,23 +24,22 @@ module Fog
             name: "hc-#{SecureRandom.hex(3)}",
             image: 'centos-7',
             server_type: 'cx11',
-            ssh_keys: ssh_keys,
+            ssh_keys: ssh_keys
           }
 
           server = create(defaults.merge(new_attributes))
 
           status = false
           begin
-            status = Timeout.timeout(bootstap_timeout) {
-              server.wait_for { sshable?({ :auth_methods => %w(publickey)}) }
-            }
+            status = Timeout.timeout(bootstap_timeout) do
+              server.wait_for { sshable?(auth_methods: %w[publickey]) }
+            end
           rescue Timeout::Error => e
-            server.destroy()
+            server.destroy
             raise e
           end
 
           server
-
         end
       end
     end

@@ -14,9 +14,9 @@ module Fog
         attribute :blocked        # boolean
 
         def type=(value)
-          valid = ['ipv4', 'ipv6']
+          valid = %w[ipv4 ipv6]
           if !valid.include? value
-            raise Fog::Hetznercloud::Compute::InvalidInputError.new("ERROR: floating_ip type must be one of #{valid}")
+            raise Fog::Hetznercloud::Compute::InvalidInputError, "ERROR: floating_ip type must be one of #{valid}"
           else
             attributes[:type] = value
           end
@@ -34,23 +34,23 @@ module Fog
 
         def home_location=(value)
           attributes[:home_location] = case value
-                                        when Hash
-                                          service.locations.new(value)
-                                        when String
-                                          service.locations.new(identity: value)
-                                        else
-                                          value
+                                       when Hash
+                                         service.locations.new(value)
+                                       when String
+                                         service.locations.new(identity: value)
+                                       else
+                                         value
                                         end
         end
 
         def server=(value)
           attributes[:server] = case value
-                                        when Hash
-                                          service.servers.new(value)
-                                        when Integer
-                                          service.servers.get(value)
-                                        else
-                                          value
+                                when Hash
+                                  service.servers.new(value)
+                                when Integer
+                                  service.servers.get(value)
+                                else
+                                  value
                                         end
         end
 
@@ -82,7 +82,7 @@ module Fog
             end
           else
             body = {
-              server: serverid,
+              server: serverid
             }
 
             if (floating_ip = service.floating_ip_assign_to_server(identity, body).body['floating_ip'])
@@ -99,7 +99,7 @@ module Fog
 
           body = {
             ip: ip,
-            dns_ptr: newname,
+            dns_ptr: newname
           }
 
           if (floating_ip = service.floating_ip_update_dns_ptr(identity, body).body['floating_ip'])
@@ -111,9 +111,7 @@ module Fog
         end
 
         def unassign
-          if !server.nil?
-            assign(nil)
-          end
+          assign(nil) unless server.nil?
         end
 
         private
@@ -127,7 +125,7 @@ module Fog
           options[:home_location] = home_location.identity unless home_location.nil?
           options[:server] = server.identity unless server.nil?
 
-          if (floating_ip = service.create_floating_ip(type,options).body['floating_ip'])
+          if (floating_ip = service.create_floating_ip(type, options).body['floating_ip'])
             merge_attributes(floating_ip)
             true
           else
@@ -136,7 +134,7 @@ module Fog
         end
 
         def update
-          return true if !@needsupdate
+          return true unless @needsupdate
           requires :identity, :description
 
           body = attributes.dup
@@ -149,9 +147,7 @@ module Fog
           else
             false
           end
-
         end
-
       end
     end
   end

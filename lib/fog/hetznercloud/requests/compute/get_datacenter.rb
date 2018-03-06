@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def get_datacenter(id)
+        def get_datacenter(_id)
           Fog::Mock.not_implemented
         end
       end

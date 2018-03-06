@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def floating_ip_update_dns_ptr(type, body)
+        def floating_ip_update_dns_ptr(_type, _body)
           Fog::Mock.not_implemented
         end
       end

@@ -12,7 +12,6 @@ module Fog
         attribute :city
         attribute :latitude
         attribute :longitude
-
       end
     end
   end

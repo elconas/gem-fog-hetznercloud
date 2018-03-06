@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def delete_image(id)
+        def delete_image(_id)
           Fog::Mock.not_implemented
         end
       end

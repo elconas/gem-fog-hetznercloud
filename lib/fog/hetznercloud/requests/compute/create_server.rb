@@ -22,7 +22,7 @@ module Fog
       end
 
       class Mock
-        def create_server(name, image, volumes, options = {})
+        def create_server(_name, _image, _volumes, _options = {})
           Fog::Mock.not_implemented
         end
       end

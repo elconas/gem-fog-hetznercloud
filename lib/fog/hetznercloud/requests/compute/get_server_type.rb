@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def get_server_type(server_type_id)
+        def get_server_type(_server_type_id)
           Fog::Mock.not_implemented
         end
       end

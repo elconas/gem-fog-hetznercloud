@@ -11,7 +11,6 @@ module Fog
         attribute :disk
         attribute :prices
         attribute :storage_type
-
       end
     end
   end

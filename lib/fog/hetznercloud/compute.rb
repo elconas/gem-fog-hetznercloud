@@ -114,7 +114,7 @@ module Fog
           message = decoded[:message]
 
           raise case code
-          when 'unauthorized', 'forbidden', 'invalid_input', 'json_error', 'locked', 'not_found', 'rate_limit_exceeded', 'resource_limit_exceeded', 'resource_unavailable', 'service_error', 'uniqueness_error'
+                when 'unauthorized', 'forbidden', 'invalid_input', 'json_error', 'locked', 'not_found', 'rate_limit_exceeded', 'resource_limit_exceeded', 'resource_unavailable', 'service_error', 'uniqueness_error'
                   Fog::Hetznercloud::Compute.const_get("#{camelize(code)}Error").slurp(error, message)
                 else
                   Fog::Hetznercloud::Compute::Error.slurp(error, message)
@@ -128,7 +128,7 @@ module Fog
         end
 
         def endpoint
-          "https://api.hetzner.cloud/v1"
+          'https://api.hetzner.cloud/v1'
         end
 
         def camelize(str)
@@ -137,11 +137,10 @@ module Fog
       end
 
       class Mock
-        def request(*args)
+        def request(*_args)
           Fog::Mock.not_implemented
         end
       end
-
     end
   end
 end

@@ -3,9 +3,8 @@ module Fog
     class Compute
       class Real
         def create_floating_ip(type, options = {})
-
           body = {
-            type: type,
+            type: type
           }
 
           # if !@datacenter.nil?
@@ -17,12 +16,11 @@ module Fog
           body.merge!(options)
 
           create('/floating_ips', body)
-
         end
       end
 
       class Mock
-        def create_floating_ip(type, options = {})
+        def create_floating_ip(_type, _options = {})
           Fog::Mock.not_implemented
         end
       end

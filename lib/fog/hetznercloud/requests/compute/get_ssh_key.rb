@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def get_ssh_key(id)
+        def get_ssh_key(_id)
           Fog::Mock.not_implemented
         end
       end

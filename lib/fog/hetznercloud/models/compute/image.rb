@@ -23,23 +23,23 @@ module Fog
 
         def created_from=(value)
           attributes[:created_from] = case value
-                                        when Hash
-                                          service.servers.new(value)
-                                        when Integer
-                                          service.servers.new(identity: value)
-                                        else
-                                          value
+                                      when Hash
+                                        service.servers.new(value)
+                                      when Integer
+                                        service.servers.new(identity: value)
+                                      else
+                                        value
                                         end
         end
 
         def bound_to=(value)
           attributes[:bound_to] = case value
-                                        when Hash
-                                          service.servers.new(value)
-                                        when Integer
-                                          service.servers.new(identity: value)
-                                        else
-                                          value
+                                  when Hash
+                                    service.servers.new(value)
+                                  when Integer
+                                    service.servers.new(identity: value)
+                                  else
+                                    value
                                         end
         end
 
@@ -72,8 +72,6 @@ module Fog
             false
           end
         end
-
-
       end
     end
   end

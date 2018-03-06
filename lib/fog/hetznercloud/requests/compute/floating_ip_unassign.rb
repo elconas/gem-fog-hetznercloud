@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def floating_ip_unassign(type, body)
+        def floating_ip_unassign(_type, _body)
           Fog::Mock.not_implemented
         end
       end

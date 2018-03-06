@@ -37,7 +37,7 @@ module Fog
                                when Hash
                                  service.images.new(value)
                                when String
-                                 service.images.all(:name => value).first
+                                 service.images.all(name: value).first
                                when Integer
                                  service.images.get(value)
                                else
@@ -49,81 +49,81 @@ module Fog
           attributes[:ssh_keys] = []
           # API does not return ssh_key
           return true if value.nil?
-          value.each { |item|
+          value.each do |item|
             thing = case item
-                               when Hash
-                                 service.ssh_keys.new(item)
-                               when String
-                                 service.ssh_keys.all(:name => item).first
-                               when Integer
-                                 service.ssh_keys.get(item)
-                               else
-                                 value
+                    when Hash
+                      service.ssh_keys.new(item)
+                    when String
+                      service.ssh_keys.all(name: item).first
+                    when Integer
+                      service.ssh_keys.get(item)
+                    else
+                      value
                                end
             attributes[:ssh_keys] << thing
-          }
+          end
         end
 
         def server_type=(value)
           attributes[:server_type] = case value
-                               when Hash
-                                 service.server_types.new(value)
-                               when String
-                                 service.server_types.all(:name => value).first
-                               when Integer
-                                 service.server_types.get(value)
-                               else
-                                 value
+                                     when Hash
+                                       service.server_types.new(value)
+                                     when String
+                                       service.server_types.all(name: value).first
+                                     when Integer
+                                       service.server_types.get(value)
+                                     else
+                                       value
                                end
         end
 
         def location=(value)
           attributes[:location] = case value
-                                   when Hash
-                                     service.locations.new(value)
-                                   when String
-                                     service.locations.all(:name => value).first
-                                   when Integer
-                                     service.locations.get(value)
-                                   else
-                                     value
+                                  when Hash
+                                    service.locations.new(value)
+                                  when String
+                                    service.locations.all(name: value).first
+                                  when Integer
+                                    service.locations.get(value)
+                                  else
+                                    value
                                    end
         end
 
         def datacenter=(value)
           attributes[:datacenter] = case value
-                                        when Hash
-                                          service.datacenters.new(value)
-                                          attributes[:location] = service.locations.new(value["location"])
-                                        when String
-                                          service.datacenters.all(:name => value).first
-                                        when Integer
-                                          service.datacenters.get(value)
-                                        else
-                                          value
+                                    when Hash
+                                      service.datacenters.new(value)
+                                      attributes[:location] = service.locations.new(value['location'])
+                                    when String
+                                      service.datacenters.all(name: value).first
+                                    when Integer
+                                      service.datacenters.get(value)
+                                    else
+                                      value
                                         end
         end
 
         def user_data=(value)
-          if value =~ /^\.?\/[^\/]+/
-            attributes[:user_data] = File.read(value)
-          else
-            attributes[:user_data] = value
-          end
+          attributes[:user_data] = if value =~ /^\.?\/[^\/]+/
+                                     File.read(value)
+                                   else
+                                     value
+                                   end
         end
 
         def name=(value)
           return true if name == value
-          @needsupdate=true
+          @needsupdate = true
           attributes[:name] = value
         end
 
         def public_dns_name
-          "static.#{public_net["ipv4"]["ip"]}.clients.your-server.de"
+          "static.#{public_net['ipv4']['ip']}.clients.your-server.de"
         end
 
         def reverse_dns_name
-          public_net["ipv4"]["dns_ptr"]
+          public_net['ipv4']['dns_ptr']
         end
 
         def ready?
@@ -186,9 +186,11 @@ module Fog
         def async=(value)
           @async = !!value
         end
+
         def async?
           @async
         end
+
         def async_mode?
           async?
         end
@@ -196,10 +198,10 @@ module Fog
         def sync=(value)
           @async = !value
         end
+
         def sync?
           !@async
         end
-
 
         def disable_rescue(async: async_mode?)
           requires :identity
@@ -212,23 +214,23 @@ module Fog
 
           # FIXME: Refactor with ssh_keys=(value) above to do DRY
           sshkeys = []
-          ssh_keys.each { |item|
+          ssh_keys.each do |item|
             thing = case item
-                               when Hash
-                                 service.ssh_keys.new(item)
-                               when String
-                                 service.ssh_keys.all(:name => item).first
-                               when Integer
-                                 service.ssh_keys.get(item)
-                               else
-                                 value
+                    when Hash
+                      service.ssh_keys.new(item)
+                    when String
+                      service.ssh_keys.all(name: item).first
+                    when Integer
+                      service.ssh_keys.get(item)
+                    else
+                      value
                                end
             sshkeys << thing.identity
-          }
+          end
 
           body = {
             type: type,
-            ssh_keys: sshkeys,
+            ssh_keys: sshkeys
           }
 
           execute_action('enable_rescue', async, body)
@@ -238,7 +240,7 @@ module Fog
         def create_backup(async: async_mode?, description: "Backup of #{attributes[:name]} created at #{Time.now}")
           requires :identity
 
-          create_image(:async => async, :description => description, :type => 'backup')
+          create_image(async: async, description: description, type: 'backup')
         end
 
         # Returns action, imageObject
@@ -247,34 +249,33 @@ module Fog
 
           body = {
             description: description,
-            type: type,
+            type: type
           }
 
           execute_action('create_image', async, body)
         end
 
         def rebuild_from_image(async: async_mode?, image:)
-
           requires :identity
 
           # FIXME: Lookup images by description. As API does not support
           #        this we need to filter our own. Probably needs pagination
           #        support.
           image_id = case image
-                                when Fog::Hetznercloud::Compute::Image
-                                  image.identity
-                                when Integer
-                                  image
+                     when Fog::Hetznercloud::Compute::Image
+                       image.identity
+                     when Integer
+                       image
                                 end
 
           body = {
-            image: image_id,
+            image: image_id
           }
 
           execute_action('rebuild', async, body)
         end
 
-        def change_type(async: async_mode?, upgrade_disk: false, server_type: )
+        def change_type(async: async_mode?, upgrade_disk: false, server_type:)
           requires :identity
 
           # FIXME: Should I shutdown and wait here as server needs to
@@ -282,7 +283,7 @@ module Fog
 
           body = {
             upgrade_disk: upgrade_disk,
-            server_type: server_type,
+            server_type: server_type
           }
 
           execute_action('change_type', async, body)
@@ -293,7 +294,7 @@ module Fog
 
           unless backup_window.nil?
             body = {
-              backup_window: backup_window,
+              backup_window: backup_window
             }
           end
 
@@ -305,7 +306,7 @@ module Fog
 
           body = {
             ip: ip,
-            dns_ptr: dns_ptr,
+            dns_ptr: dns_ptr
           }
 
           execute_action('change_dns_ptr', async, body)
@@ -321,7 +322,7 @@ module Fog
         def reset_root_password(async: async_mode?)
           requires :identity
           unless ready?
-            throw Fog::Hetznercloud::Error::StateError.new("ERROR: to reset the root password, the server must be running")
+            throw Fog::Hetznercloud::Error::StateError.new('ERROR: to reset the root password, the server must be running')
           end
 
           execute_action('reset_password', async)
@@ -339,14 +340,14 @@ module Fog
               end
             end
           end
-          extra = service.images.new(request_body["image"]) unless request_body["image"].nil?
-          extra = request_body["root_password"] unless request_body["root_password"].nil?
-          return action, extra
+          extra = service.images.new(request_body['image']) unless request_body['image'].nil?
+          extra = request_body['root_password'] unless request_body['root_password'].nil?
+          [action, extra]
         end
 
         def public_ip_address
-          public_net["ipv6"]["ip"] if public_net.has_key?("ipv6")
-          public_net["ipv4"]["ip"] if public_net.has_key?("ipv4")
+          public_net['ipv6']['ip'] if public_net.key?('ipv6')
+          public_net['ipv4']['ip'] if public_net.key?('ipv4')
         end
 
         private
@@ -355,7 +356,7 @@ module Fog
           requires :name, :server_type, :image
 
           options = {}
-          options[:ssh_keys] = ssh_keys.map { |x| x.identity }  unless ssh_keys.nil?
+          options[:ssh_keys] = ssh_keys.map(&:identity) unless ssh_keys.nil?
           options[:user_data] = user_data unless user_data.nil?
           options[:start_after_create] = start_after_create unless start_after_create.nil?
           options[:location] = location.identity unless location.nil?
@@ -376,7 +377,7 @@ module Fog
           body = attributes.dup
 
           body = {
-              name: name,
+            name: name
           }
 
           if (server = service.update_server(identity, body).body['server'])
@@ -386,7 +387,6 @@ module Fog
             false
           end
         end
-
       end
     end
   end

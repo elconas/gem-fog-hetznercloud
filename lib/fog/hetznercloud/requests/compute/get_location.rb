@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def get_location(id)
+        def get_location(_id)
           Fog::Mock.not_implemented
         end
       end

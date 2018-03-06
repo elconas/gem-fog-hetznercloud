@@ -25,7 +25,6 @@ module Fog
         def success?
           status == 'success'
         end
-
       end
     end
   end

@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def get_image(image_id)
+        def get_image(_image_id)
           Fog::Mock.not_implemented
         end
       end

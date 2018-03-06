@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def update_floating_ip(id, body)
+        def update_floating_ip(_id, _body)
           Fog::Mock.not_implemented
         end
       end

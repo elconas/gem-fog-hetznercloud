@@ -5,7 +5,7 @@ module Fog
         def create_ssh_key(name, public_key, options = {})
           body = {
             name: name,
-            public_key: public_key,
+            public_key: public_key
           }
 
           body.merge!(options)
@@ -15,7 +15,7 @@ module Fog
       end
 
       class Mock
-        def create_ssh_key(type, home_location, server, options = {})
+        def create_ssh_key(_type, _home_location, _server, _options = {})
           Fog::Mock.not_implemented
         end
       end

@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def update_image(server_id, body)
+        def update_image(_server_id, _body)
           Fog::Mock.not_implemented
         end
       end

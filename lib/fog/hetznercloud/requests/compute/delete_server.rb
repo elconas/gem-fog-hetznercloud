@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def delete_server(server_id)
+        def delete_server(_server_id)
           Fog::Mock.not_implemented
         end
       end

@@ -17,11 +17,11 @@ module Fog
         end
 
         def public_key=(value)
-          if value =~ /^\.?\/[^\/]+/
-            attributes[:public_key] = File.read(value)
-          else
-            attributes[:public_key] = value
-          end
+          attributes[:public_key] = if value =~ /^\.?\/[^\/]+/
+                                      File.read(value)
+                                    else
+                                      value
+                                    end
         end
 
         def save
@@ -59,7 +59,6 @@ module Fog
             false
           end
         end
-
       end
     end
   end

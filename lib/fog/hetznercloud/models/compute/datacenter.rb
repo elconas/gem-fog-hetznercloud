@@ -9,7 +9,6 @@ module Fog
         attribute :description
         attribute :location
         attribute :server_types
-
       end
     end
   end

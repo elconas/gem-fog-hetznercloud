@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def get_action(id)
+        def get_action(_id)
           Fog::Mock.not_implemented
         end
       end

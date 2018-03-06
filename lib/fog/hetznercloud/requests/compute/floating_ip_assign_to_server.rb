@@ -8,7 +8,7 @@ module Fog
       end
 
       class Mock
-        def floating_ip_assign_to_server(type, body)
+        def floating_ip_assign_to_server(_type, _body)
           Fog::Mock.not_implemented
         end
       end

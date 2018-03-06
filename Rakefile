@@ -22,4 +22,3 @@ task test: ['test:units', 'test:integration']
 RuboCop::RakeTask.new(:rubocop)
 
 task default: %i[test rubocop]
-

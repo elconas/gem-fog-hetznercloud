@@ -1,8 +1,7 @@
-  module Fog
+module Fog
   module Hetznercloud
     module RequestHelper
       def create(path, body)
-
         request(method: :post,
                 path: "/v1#{path}",
                 body: body,
@@ -10,7 +9,6 @@
       end
 
       def get(path, query = {})
-
         request(method: :get,
                 path: "/v1#{path}",
                 query: query,
@@ -18,7 +16,6 @@
       end
 
       def update(path, body)
-
         request(method: :put,
                 path: "/v1#{path}",
                 body: body,
@@ -26,10 +23,9 @@
       end
 
       def delete(path)
-
         request(method: :delete,
                 path: "/v1#{path}",
-                expects: [200,204])
+                expects: [200, 204])
       end
     end
   end
