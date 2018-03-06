@@ -8,7 +8,6 @@ module Fog
         attribute :name
         attribute :description
         attribute :country
-        # attribute :extra_volumes
         attribute :city
         attribute :latitude
         attribute :longitude

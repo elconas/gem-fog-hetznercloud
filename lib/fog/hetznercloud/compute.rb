@@ -75,7 +75,7 @@ module Fog
       request :list_datacenters
       request :get_datacenter
 
-      # Datacenters
+      # Ssh Keys
       request :list_ssh_keys
       request :get_ssh_key
       request :create_ssh_key
@@ -128,7 +128,7 @@ module Fog
         end
 
         def endpoint
-          'https://api.hetzner.cloud/v1'
+          'https://api.hetzner.cloud/'
         end
 
         def camelize(str)

@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+#gem 'fog-hetznercloud', '>= 0.0.1'
+gem 'fog-hetznercloud', :path => '../'
+
+# gem "rails"

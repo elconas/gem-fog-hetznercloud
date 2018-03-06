@@ -81,8 +81,19 @@ module Fog
               false
             end
           else
+            server_id = case serverid
+                        when Fog::Hetznercloud::Compute::Server
+                          serverid.identity
+                        when String
+                          service.servers.all(name: serverid).first.identity
+                        when Integer
+                          serverid
+                        else
+                          raise Fog::Hetznercloud::Error::InvalidInputError, 'ERROR: Need Fog::Hetznercloud::Compute::Server|String|Integer'
+                                      end
+
             body = {
-              server: serverid
+              server: server_id
             }
 
             if (floating_ip = service.floating_ip_assign_to_server(identity, body).body['floating_ip'])

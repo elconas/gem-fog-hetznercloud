@@ -1,6 +1,7 @@
 require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'rubocop/rake_task'
+require 'bump/tasks'
 
 Rake::TestTask.new('test:units') do |t|
   t.libs << 'test'

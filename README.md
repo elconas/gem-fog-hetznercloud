@@ -1,11 +1,12 @@
 
+
 # Rubygem fog-hetznercloud
 
 Fog provider gem to support [Hetzner Cloud](https://cloud.hetzner.com/).
 
 ## Features and development
 
-This gem is currently a MVP prototype that is missing some features:
+This gem is currently a MVP prototype that is **missing** some features like:
 
 API:
 * [Pagination Support](https://docs.hetzner.cloud/#header-pagination-1)
@@ -53,7 +54,9 @@ default:
 
 ## Example
 
-### Gemfile
+**See [examples/integrationtest.rb](examples/integrationtest.rb) for a reasonable example**
+
+### Ge mfile
 
 ```ruby
 source "https://rubygems.org"

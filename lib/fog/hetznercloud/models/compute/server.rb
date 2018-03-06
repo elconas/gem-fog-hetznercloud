@@ -105,7 +105,7 @@ module Fog
         end
 
         def user_data=(value)
-          attributes[:user_data] = if value =~ /^\.?\/[^\/]+/
+          attributes[:user_data] = if value =~ /^(\.|~)?\/[^\/]+/
                                      File.read(value)
                                    else
                                      value

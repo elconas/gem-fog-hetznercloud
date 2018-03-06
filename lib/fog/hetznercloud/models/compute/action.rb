@@ -8,7 +8,6 @@ module Fog
         attribute :command
         attribute :status
         attribute :progress
-        # attribute :extra_volumes
         attribute :started
         attribute :finished
         attribute :resources
