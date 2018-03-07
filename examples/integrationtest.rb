@@ -24,7 +24,34 @@ server = nil
 floating_ip = nil
 ssh_key = nil
 
+
 raise "Error: Fild #{ssh_private_keyfile} missing (create with 'ssh-keygen -t rsa -N \"\" -f #{ssh_private_keyfile}')" unless File.file?(ssh_private_keyfile)
+
+def listall(connection)
+  connection.servers.each { |x|
+    puts "Server #{x.id}: #{x.name} #{x.public_ip_address}"
+  }
+  connection.floating_ips.each { |x|
+    puts "Floating IP #{x.id}: #{x.ip}"
+  }
+  connection.images.all(:type => 'snapshot').each { |x|
+    puts "Snapshot Image #{x.id}: #{x.description}"
+  }
+  connection.images.all(:type => 'backup').each { |x|
+    puts "Backup Image #{x.id}: #{x.description}"
+  }
+end
+
+def cleanup(connection)
+  server.destroy unless server.nil?
+  image_snapshot.destroy unless image_snapshot.nil?
+  image_backup.destroy unless image_backup.nil?
+  floating_ip.destroy unless floating_ip.nil?
+  ssh_key.destroy unless ssh_key.nil?
+
+  ## List Accounts
+  listall(connection)
+end
 
 begin
 
@@ -143,24 +170,8 @@ begin
   puts "Destroy Server ..."
   server.destroy
 rescue Exception => e
-  server.destroy unless server.nil?
-  image_snapshot.destroy unless image_snapshot.nil?
-  image_backup.destroy unless image_backup.nil?
-  floating_ip.destroy unless floating_ip.nil?
-  ssh_key.destroy unless ssh_key.nil?
-
-  ## List Accounts
-  connection.servers.each { |x|
-    puts "Server #{x.id}: #{x.name} #{x.public_ip_address}"
-  }
-  connection.floating_ips.each { |x|
-  	puts "Floating IP #{x.id}: #{x.ip}"
-  }
-  connection.images.all(:type => 'snapshot').each { |x|
-  	puts "Snapshot Image #{x.id}: #{x.description}"
-  }
-  connection.images.all(:type => 'backup').each { |x|
-  	puts "Backup Image #{x.id}: #{x.description}"
-  }
+  cleanup(connection)
   raise e
+else
+  cleanup(connection)
 end
