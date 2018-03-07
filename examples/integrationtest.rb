@@ -23,11 +23,13 @@ image_backup = nil
 server = nil
 floating_ip = nil
 ssh_key = nil
+elements_created = [] # collector for cleanup
 
 
 raise "Error: Fild #{ssh_private_keyfile} missing (create with 'ssh-keygen -t rsa -N \"\" -f #{ssh_private_keyfile}')" unless File.file?(ssh_private_keyfile)
 
-def listall(connection)
+def listall(connection:)
+  puts "==== Left ====="
   connection.servers.each { |x|
     puts "Server #{x.id}: #{x.name} #{x.public_ip_address}"
   }
@@ -42,19 +44,18 @@ def listall(connection)
   }
 end
 
-def cleanup(connection)
-  server.destroy unless server.nil?
-  image_snapshot.destroy unless image_snapshot.nil?
-  image_backup.destroy unless image_backup.nil?
-  floating_ip.destroy unless floating_ip.nil?
-  ssh_key.destroy unless ssh_key.nil?
-
+def cleanup(elements_created: [], connection:)
+  puts "==== Cleanup ====="
+  elements_created.each { |e|
+    puts "Destroying #{e.class} with id #{e.identity}"
+    e.destroy()
+  }
   ## List Accounts
-  listall(connection)
+  listall(:connection => connection)
 end
 
 begin
-
+  puts "==== Running Tests ===="
   # Lookups, see api doc https://docs.hetzner.cloud for filters
   connection.datacenters.each { |x| puts "Datacenter #{x.name} located in #{x.location.name}" }
   connection.locations.each { |x| puts "Location #{x.name} located in #{x.city}" }
@@ -68,12 +69,14 @@ begin
   if !ssh_key
     puts "Creating SSH Key ..."
     ssh_key = connection.ssh_keys.create(:name => ssh_keyname, :public_key => ssh_public_keyfile)
+    elements_created << ssh_key
   else
     puts "Using existing SSH Key ..."
   end
 
   puts "Creating Floating IP"
   floating_ip = connection.floating_ips.create(:type => 'ipv4', :home_location => 'fsn1' )
+  elements_created << floating_ip
   puts "Using existing VIP #{floating_ip.ip} #{floating_ip.server.nil? ? 'unbound' : 'assigned to' + floating_ip.server.name}"
 
   # lookup existing server by name or create new server, works with most resources
@@ -90,10 +93,17 @@ begin
       :ssh_keys => [ ssh_key.identity ],
       :bootstap_timeout => 120,
     )
+    elements_created << server
   else
     puts "Using existing Server ... "
   end
   puts "Server public_ip_address:#{server.public_ip_address} (#{server.public_dns_name}/#{server.reverse_dns_name})"
+
+  puts "Power On"
+  server.poweron()
+
+  puts "Wait for SSH"
+  server.wait_for { server.sshable?  }
 
   puts "Assign VIP #{floating_ip.ip} to #{server.name}"
   floating_ip.assign(server)
@@ -120,12 +130,14 @@ begin
 
   puts "Create Image (Sync) ..."
   action, image_snapshot = server.create_image()
+  elements_created << image_snapshot
 
   puts "Enable Backup ..."
   server.enable_backup
 
   puts "Create Backup (ASync) ..."
   action, image_backup = server.create_backup()
+  elements_created << image_backup
 
   puts "Disable Backup ..."
   server.enable_backup
@@ -150,7 +162,7 @@ begin
   server.shutdown()
   # FIXME: Handle in GEM, sometimes API error ?
   server.wait_for { server.stopped?  }
-  server.change_type(:upgrade_disk => false, :server_type => 'cx21')
+  server.change_type(:upgrade_disk => false, :server_type => 'cx21', :async => false)
   server.poweron()
   server.wait_for { server.sshable?  }
 
@@ -169,9 +181,10 @@ begin
 
   puts "Destroy Server ..."
   server.destroy
+  elements_created.delete(server)
 rescue Exception => e
-  cleanup(connection)
+  cleanup(:elements_created => elements_created, :connection => connection)
   raise e
 else
-  cleanup(connection)
+  cleanup(:elements_created => elements_created, :connection => connection)
 end
