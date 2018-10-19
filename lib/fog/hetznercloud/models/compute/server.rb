@@ -26,6 +26,7 @@ module Fog
         attribute :outgoing_traffic
         attribute :incoming_traffic
         attribute :included_traffic
+        attribute :labels
 
         def initialize(options)
           @async = true
@@ -359,6 +360,7 @@ module Fog
           options[:ssh_keys] = ssh_keys.map(&:identity) unless ssh_keys.nil?
           options[:user_data] = user_data unless user_data.nil?
           options[:start_after_create] = start_after_create unless start_after_create.nil?
+          options[:labels] = labels unless labels.nil?
           options[:location] = location.identity unless location.nil?
           options[:datacenter] = datacenter.identity unless datacenter.nil?
 
